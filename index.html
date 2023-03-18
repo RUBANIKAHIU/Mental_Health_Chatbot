@@ -1,0 +1,19 @@
+this is my index.HTML where i get my response
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chatbot App</title>
+
+  </head>
+  <body>
+    <h1>Chatbot App</h1>
+    <form method="POST" action="{{ url_for('predict') }}">
+      <input type="text" name="text" />
+      <button type="submit">Send</button>
+    </form>
+    {% if text %}
+    <p>You: {{ text }}</p>
+    <p>Bot: {{ response }}</p>
+    {% endif %}
+  </body>
+</html>
