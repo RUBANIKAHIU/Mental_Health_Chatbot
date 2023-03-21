@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mental Health Bot</title>
+    <style>
+      #chat-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 50px;
+      }
+      
+      #chat-log {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        border: 1px solid black;
+        height: 80%;
+        overflow-y: scroll;
+      }
+      
+      .message {
+        display: flex;
+        justify-content: space-between;
+        margin: 5px;
+        padding: 5px;
+        border-bottom: 1px solid black;
+      }
+      
+      .message-text {
+        margin-right: 10px;
+      }
+      
+      .timestamp {
+        color: gray;
+        font-size: 12px;
+      }
+      #send-btn{
+        padding: 5px;
+        color: blue;
+        border: 0px;
+
+
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Mental Health Bot</h1>
+    <div id="chat-container">
+      <ul id="chat-log"></ul>
+      <form>
+        <input type="text" placeholder="Message" name="message" id="message-input">
+        <button type="button" id="send-btn" onclick="sendMessage()">Send</button>
+      </form>
+    </div>
+  </body>
+  <script>
+    function sendMessage() {
+      var messageInput = document.getElementById("message-input");
+      var message = messageInput.value.trim();
+      if (message) {
+        var chatLog = document.getElementById("chat-log");
+        var userMessage = document.createElement("li");
+        var userMessageText = document.createElement("span");
+        var userMessageTimestamp = document.createElement("span");
+        userMessageText.textContent = "You: " + message;
+        userMessageTimestamp.textContent = new Date().toLocaleTimeString();
+        userMessageTimestamp.classList.add("timestamp");
+        userMessage.appendChild(userMessageText);
+        userMessage.appendChild(userMessageTimestamp);
+        userMessage.classList.add("message");
+        userMessage.classList.add("user-message");
+        chatLog.appendChild(userMessage);
+        messageInput.value = "";
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/get");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() {
+          if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            var botMessage = document.createElement("li");
+            var botMessageText = document.createElement("span");
+            var botMessageTimestamp = document.createElement("span");
+            botMessageText.textContent = "Bot: " + this.responseText;
+            botMessageTimestamp.textContent = new Date().toLocaleTimeString();
+            botMessageTimestamp.classList.add("timestamp");
+            botMessage.appendChild(botMessageText);
+            botMessage.appendChild(botMessageTimestamp);
+            botMessage.classList.add("message");
+            botMessage.classList.add("bot-message");
+            chatLog.appendChild(botMessage);
+          }
+        };
+        xhr.send("message=" + encodeURIComponent(message));
+      }
+    }
+  </script>
+</html>
